@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="roomProps"
+            type="com.hw.mediasoup.vm.RoomProps" />
+
+        <variable
+            name="roomObserver"
+            type="com.hw.meetdemo.databind.RoomObserver" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false">
+
+        <!--对方图像-->
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/x5"
+                android:text="@string/targetText"
+                android:textSize="@dimen/fontSize18" />
+
+            <com.hw.mediasoup.view.PeerView
+                android:id="@+id/memberVideo_1"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="5"
+                tools:ignore="NestedWeights" />
+
+            <com.hw.mediasoup.view.PeerView
+                android:id="@+id/memberVideo_2"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="5" />
+
+
+        </LinearLayout>
+
+        <!--自己图像-->
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/x5"
+                android:text="@string/myText"
+                android:textSize="@dimen/fontSize18" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.hw.mediasoup.view.MeView
+                    android:id="@+id/meVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x6"
+                    android:layout_marginBottom="@dimen/x6"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <!--静音-->
+                    <Button
+                        android:id="@+id/muteMic"
+                        style="?android:attr/buttonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/muteMicText"
+                        android:visibility="@{roomObserver.hideMicButton==false ? View.VISIBLE:View.GONE}" />
+
+                    <!--解除静音-->
+                    <Button
+                        android:id="@+id/unMuteMic"
+                        style="?android:attr/buttonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/unMuteMicText"
+                        android:visibility="@{roomObserver.hideMicButton==true ? View.VISIBLE:View.GONE}" />
+
+                    <!--麦克风已禁用-->
+                    <Button
+                        android:id="@+id/disabledMic"
+                        style="?android:attr/buttonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/disabledMicText"
+                        android:visibility="@{roomObserver.showDisableMicButton==true ? View.VISIBLE:View.GONE}" />
+
+                    <!--挂断-->
+                    <Button
+                        android:id="@+id/hangUp"
+                        style="?android:attr/buttonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hangUpText" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

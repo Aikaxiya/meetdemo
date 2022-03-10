@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="roomObserver"
+            type="com.hw.meetdemo.databind.RoomObserver" />
+    </data>
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="@dimen/x200"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!--第一行-->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_marginBottom="@dimen/x20"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|bottom">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="@dimen/x40"
+                android:gravity="center"
+                android:text="@string/meetRoomCode"
+                android:textSize="@dimen/fontSize22" />
+
+            <EditText android:layout_width="@dimen/y110"
+                android:layout_height="@dimen/x40"
+                android:layout_marginStart="@dimen/y5"
+                android:autofillHints=""
+                android:imeOptions="actionGo|flagNoExtractUi|flagNoFullscreen"
+                android:inputType="text"
+                android:labelFor="@+id/meetLabel"
+                android:maxLength="100"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/y2"
+                android:paddingRight="@dimen/y2"
+                android:text="@={roomObserver.meetRoomCode}"
+                android:textSize="@dimen/fontSize22"
+                tools:ignore="LabelFor" />
+        </LinearLayout>
+
+        <!--第二行-->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_marginBottom="@dimen/x20"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|bottom">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="@dimen/x40"
+                android:gravity="center"
+                android:text="@string/meetNumber"
+                android:textSize="@dimen/fontSize22" />
+
+            <EditText android:layout_width="@dimen/y110"
+                android:layout_height="@dimen/x40"
+                android:layout_marginStart="@dimen/y5"
+                android:autofillHints=""
+                android:imeOptions="actionGo|flagNoExtractUi|flagNoFullscreen"
+                android:inputType="text"
+                android:labelFor="@+id/meetLabel"
+                android:maxLength="100"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/y2"
+                android:paddingRight="@dimen/y2"
+                android:text="@={roomObserver.meetNumber}"
+                android:textSize="@dimen/fontSize22"
+                tools:ignore="LabelFor" />
+        </LinearLayout>
+
+        <!--第三行-->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_marginBottom="@dimen/x20"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|bottom">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="@dimen/x40"
+                android:gravity="center"
+                android:text="@string/targetNumber"
+                android:textSize="@dimen/fontSize22" />
+
+            <EditText android:layout_width="@dimen/y110"
+                android:layout_height="@dimen/x40"
+                android:layout_marginStart="@dimen/y5"
+                android:autofillHints=""
+                android:imeOptions="actionGo|flagNoExtractUi|flagNoFullscreen"
+                android:inputType="text"
+                android:labelFor="@+id/meetLabel"
+                android:maxLength="100"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/y2"
+                android:paddingRight="@dimen/y2"
+                android:text="@={roomObserver.targetNumber}"
+                android:textSize="@dimen/fontSize22"
+                tools:ignore="LabelFor" />
+        </LinearLayout>
+
+        <!--操作按钮-->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|top">
+
+            <!--呼叫-->
+            <Button android:id="@+id/meetCallBtn"
+                style="?android:attr/buttonStyle"
+                android:layout_width="@dimen/y80"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/y10"
+                android:layout_marginRight="@dimen/y10"
+                android:text="@string/meetCallText" />
+
+            <Button android:id="@+id/meetBackBtn"
+                style="?android:attr/buttonStyle"
+                android:layout_width="@dimen/y80"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/y10"
+                android:layout_marginRight="@dimen/y10"
+                android:text="@string/meetBackText" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</layout>
