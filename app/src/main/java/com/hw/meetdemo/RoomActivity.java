@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,6 +26,8 @@ import com.hw.mediasoup.lib.UrlFactory;
 import com.hw.mediasoup.lib.lv.RoomStore;
 import com.hw.mediasoup.lib.model.Notify;
 import com.hw.mediasoup.lib.model.Peer;
+import com.hw.mediasoup.lib.model.Peers;
+import com.hw.mediasoup.view.PeerView;
 import com.hw.mediasoup.vm.EdiasProps;
 import com.hw.mediasoup.vm.MeProps;
 import com.hw.mediasoup.vm.PeerProps;
@@ -39,7 +43,11 @@ import com.nabinbhandari.android.permissions.Permissions;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,6 +73,8 @@ public class RoomActivity extends BaseActivity {
     private RoomStore mRoomStore;
     private RoomClient mRoomClient;
     private final ExecutorService recordService = Executors.newSingleThreadExecutor();
+    private final Map<String, PeerView> peerViewMap = new ConcurrentHashMap<>();
+    private static final String PEER_VIEW_PREFIX = "peerView_";
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -175,28 +185,7 @@ public class RoomActivity extends BaseActivity {
                 connected.set(false);
             }
         });
-        mRoomStore.getPeers().observe(this, peers -> {
-            List<Peer> peersList = peers.getAllPeers();
-            if (peersList.size() == 1) {
-                Peer peer = peersList.get(0);
-                PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
-                peerProps.connect(this, peer.getId());
-                mediasoupActivityBinding.memberVideo1.setProps(peerProps, mRoomClient);
-            }
-            //指定对方显示音视频
-            if (peersList.size() == 2) {
-                //member1
-                Peer peer1 = peersList.get(0);
-                PeerProps peerProps1 = new PeerProps(getApplication(), mRoomStore);
-                peerProps1.connect(this, peer1.getId());
-                mediasoupActivityBinding.memberVideo1.setProps(peerProps1, mRoomClient);
-                //member2
-                Peer peer2 = peersList.get(1);
-                PeerProps peerProps2 = new PeerProps(getApplication(), mRoomStore);
-                peerProps2.connect(this, peer2.getId());
-                mediasoupActivityBinding.memberVideo2.setProps(peerProps2, mRoomClient);
-            }
-        });
+        mRoomStore.getPeers().observe(this, this::setPeerViewLayout);
         // 通知
         final Observer<Notify> notifyObserver = notify -> {
             if (notify == null) return;
@@ -267,8 +256,6 @@ public class RoomActivity extends BaseActivity {
             mRoomStore = null;
         }
         mediasoupActivityBinding.meVideo.close();
-        mediasoupActivityBinding.memberVideo1.close();
-        mediasoupActivityBinding.memberVideo2.close();
     }
 
     //发送录像请求
@@ -285,5 +272,35 @@ public class RoomActivity extends BaseActivity {
                 runOnUiThread(() -> Toast.makeText(this, "服务器连接失败,请联系管理员", Toast.LENGTH_SHORT).show());
             }
         });
+    }
+
+    public PeerView generatePeerView() {
+        PeerView peerView = new PeerView(this);
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(500, 500);
+        peerView.setLayoutParams(lp);
+        return peerView;
+    }
+
+    public void setPeerViewLayout(Peers peers) {
+        LinearLayout memberContainer = mediasoupActivityBinding.memberContainer;
+        List<Peer> peerList = peers.getAllPeers();
+        Set<String> peerIds = new HashSet<>();
+        for (Peer peer : peerList) {
+            String mapKey = PEER_VIEW_PREFIX + peer.getId();
+            peerIds.add(mapKey);
+            if (peerViewMap.containsKey(mapKey)) continue;
+            PeerView peerView = generatePeerView();
+            peerViewMap.put(mapKey, peerView);
+            memberContainer.addView(peerView);
+            PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
+            peerProps.connect(this, peer.getId());
+            peerView.setProps(peerProps, mRoomClient);
+        }
+        for (Map.Entry<String, PeerView> entry : peerViewMap.entrySet()) {
+            if (!peerIds.contains(entry.getKey())) {
+                peerViewMap.remove(entry.getKey());
+                memberContainer.removeView(entry.getValue());
+            }
+        }
     }
 }

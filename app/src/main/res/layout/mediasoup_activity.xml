@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -36,19 +35,12 @@
                 android:text="@string/targetText"
                 android:textSize="@dimen/fontSize18" />
 
-            <com.hw.mediasoup.view.PeerView
-                android:id="@+id/memberVideo_1"
+            <LinearLayout
+                android:id="@+id/memberContainer"
                 android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="5"
-                tools:ignore="NestedWeights" />
-
-            <com.hw.mediasoup.view.PeerView
-                android:id="@+id/memberVideo_2"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="5" />
-
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" />
 
         </LinearLayout>
 
