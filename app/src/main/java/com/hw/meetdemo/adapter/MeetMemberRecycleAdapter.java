@@ -1,6 +1,7 @@
 package com.hw.meetdemo.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.hw.mediasoup.lib.model.Peer;
+import com.hw.mediasoup.lib.RoomClient;
+import com.hw.mediasoup.view.PeerView;
+import com.hw.mediasoup.vm.PeerProps;
 import com.hw.meetdemo.R;
 import com.hw.meetdemo.databinding.MemberItemLayout1Binding;
 
@@ -24,12 +27,17 @@ import java.util.List;
 public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRecycleAdapter.MemberViewHolder> {
 
     private final Context context;
-    private final List<String> peers;
+    private final List<PeerProps> peerProps;
+    private final RoomClient roomClient;
     private MemberItemLayout1Binding memberItemLayout1Binding;
+    private final int width, height;
 
-    public MeetMemberRecycleAdapter(Context context, List<String> peers) {
+    public MeetMemberRecycleAdapter(Context context, List<PeerProps> peerProps, RoomClient roomClient, int width, int height) {
         this.context = context;
-        this.peers = peers;
+        this.peerProps = peerProps;
+        this.roomClient = roomClient;
+        this.width = width;
+        this.height = height;
     }
 
     static class MemberViewHolder extends RecyclerView.ViewHolder {
@@ -48,12 +56,16 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
 
     @Override
     public void onBindViewHolder(@NonNull MemberViewHolder memberViewHolder, int position) {
-        memberItemLayout1Binding.member1.setText(peers.get(position));
+        PeerView peerView = memberItemLayout1Binding.member1;
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, height);
+        peerView.setLayoutParams(lp);
+        Log.d("setProps", "onBindViewHolder: "+peerProps.get(position));
+        peerView.setProps(peerProps.get(position), roomClient);
     }
 
     @Override
     public int getItemCount() {
-        return peers.size();
+        return peerProps.size();
     }
 
 }

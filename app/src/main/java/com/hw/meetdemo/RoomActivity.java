@@ -77,8 +77,8 @@ public class RoomActivity extends BaseActivity {
     private final ExecutorService recordService = Executors.newSingleThreadExecutor();
     private final Map<String, PeerView> peerViewMap = new ConcurrentHashMap<>();
     private static final String PEER_VIEW_PREFIX = "peerView_";
-    private final List<String> members = new ArrayList<>();
-    private MeetMemberRecycleAdapter meetMemberRecycleAdapter;
+    private final List<PeerProps> memberProps = new ArrayList<>();
+    private MeetMemberRecycleAdapter meetMemberRecycleAdapter = null;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -86,18 +86,21 @@ public class RoomActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         mediasoupActivityBinding = DataBindingUtil.setContentView(this, R.layout.mediasoup_activity);
         mediasoupActivityBinding.setRoomObserver(roomObserver);
-        //创建room
-        createRoom();
-        //验证权限
-        checkPermission();
-        //
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        mediasoupActivityBinding.memberContainerRecycle.setLayoutManager(manager);
-        meetMemberRecycleAdapter = new MeetMemberRecycleAdapter(this, members);
-        mediasoupActivityBinding.memberContainerRecycle.setAdapter(meetMemberRecycleAdapter);
+        mediasoupActivityBinding.memberParent.post(() -> {
+            int width = mediasoupActivityBinding.memberParent.getWidth();
+            int height = mediasoupActivityBinding.memberParent.getHeight();
+            //生成recycleView
+            LinearLayoutManager manager = new LinearLayoutManager(this);
+            manager.setOrientation(LinearLayoutManager.VERTICAL);
+            mediasoupActivityBinding.memberContainerRecycle.setLayoutManager(manager);
+            meetMemberRecycleAdapter = new MeetMemberRecycleAdapter(this, memberProps, mRoomClient, width, height);
+            mediasoupActivityBinding.memberContainerRecycle.setAdapter(meetMemberRecycleAdapter);
+            //创建room
+            createRoom();
+            //验证权限
+            checkPermission();
+        });
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void createRoom() {
@@ -292,28 +295,39 @@ public class RoomActivity extends BaseActivity {
     }
 
     public void setPeerViewLayout(Peers peers) {
-        members.clear();
-        LinearLayout memberContainer = mediasoupActivityBinding.memberContainer;
+        memberProps.clear();
         List<Peer> peerList = peers.getAllPeers();
-        Set<String> peerIds = new HashSet<>();
         for (Peer peer : peerList) {
-            members.add(peer.getId());
-            String mapKey = PEER_VIEW_PREFIX + peer.getId();
-            peerIds.add(mapKey);
-            if (peerViewMap.containsKey(mapKey)) continue;
-            PeerView peerView = generatePeerView();
-            peerViewMap.put(mapKey, peerView);
-            memberContainer.addView(peerView);
             PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
             peerProps.connect(this, peer.getId());
-            peerView.setProps(peerProps, mRoomClient);
+            memberProps.add(peerProps);
         }
-        for (Map.Entry<String, PeerView> entry : peerViewMap.entrySet()) {
-            if (!peerIds.contains(entry.getKey())) {
-                peerViewMap.remove(entry.getKey());
-                memberContainer.removeView(entry.getValue());
-            }
-        }
-        meetMemberRecycleAdapter.notifyItemChanged(0, members.size());
+        meetMemberRecycleAdapter.notifyItemRangeChanged(0, memberProps.size());
     }
+
+    //public void setPeerViewLayout2(Peers peers) {
+    //    members.clear();
+    //    LinearLayout memberContainer = mediasoupActivityBinding.memberContainer;
+    //    List<Peer> peerList = peers.getAllPeers();
+    //    Set<String> peerIds = new HashSet<>();
+    //    for (Peer peer : peerList) {
+    //        members.add(peer.getId());
+    //        String mapKey = PEER_VIEW_PREFIX + peer.getId();
+    //        peerIds.add(mapKey);
+    //        if (peerViewMap.containsKey(mapKey)) continue;
+    //        PeerView peerView = generatePeerView();
+    //        peerViewMap.put(mapKey, peerView);
+    //        memberContainer.addView(peerView);
+    //        PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
+    //        peerProps.connect(this, peer.getId());
+    //        peerView.setProps(peerProps, mRoomClient);
+    //    }
+    //    for (Map.Entry<String, PeerView> entry : peerViewMap.entrySet()) {
+    //        if (!peerIds.contains(entry.getKey())) {
+    //            peerViewMap.remove(entry.getKey());
+    //            memberContainer.removeView(entry.getValue());
+    //        }
+    //    }
+    //    meetMemberRecycleAdapter.notifyItemChanged(0, members.size());
+    //}
 }
