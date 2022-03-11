@@ -12,6 +12,7 @@ import com.hw.meetdemo.databind.RoomBean;
 import com.hw.meetdemo.databind.RoomObserver;
 import com.hw.meetdemo.databinding.MenuActivityBinding;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 
 /**
@@ -32,19 +33,16 @@ public class MenuActivity extends BaseActivity {
         menuActivityBinding.setRoomObserver(roomObserver);
         //TODO 测试赋值
         roomObserver.meetRoomCode.set("102");
-        roomObserver.meetNumber.set("windows");
-        roomObserver.targetNumber.set("onePlus");
+        roomObserver.meetNumber.set(RandomUtil.randomString(4));
         //呼叫按钮点击
         menuActivityBinding.meetCallBtn.setOnClickListener(v -> {
             String meetNum = roomObserver.meetNumber.get();
-            String targetNumber = roomObserver.targetNumber.get();
             String meetRoomCode = roomObserver.meetRoomCode.get();
-            if (StrUtil.isBlank(meetRoomCode) || StrUtil.isBlank(meetNum) || StrUtil.isBlank(targetNumber)) {
-                Toast.makeText(this, "请输入编号", Toast.LENGTH_SHORT).show();
+            if (StrUtil.isBlank(meetRoomCode) || StrUtil.isBlank(meetNum)) {
+                Toast.makeText(this, "请输入昵称", Toast.LENGTH_SHORT).show();
             } else {
                 RoomBean.roomCode = meetRoomCode;
                 RoomBean.FROM = meetNum;
-                RoomBean.TO = targetNumber;
                 //跳转页面
                 AppManager.getInstance().startActivity(RoomActivity.class);
             }
