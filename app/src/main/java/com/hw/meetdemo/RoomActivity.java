@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hw.mediasoup.lib.PeerConnectionUtils;
@@ -32,6 +33,7 @@ import com.hw.mediasoup.vm.EdiasProps;
 import com.hw.mediasoup.vm.MeProps;
 import com.hw.mediasoup.vm.PeerProps;
 import com.hw.mediasoup.vm.RoomProps;
+import com.hw.meetdemo.adapter.MeetMemberRecycleAdapter;
 import com.hw.meetdemo.base.AppManager;
 import com.hw.meetdemo.base.BaseActivity;
 import com.hw.meetdemo.databind.RecordParam;
@@ -75,6 +77,8 @@ public class RoomActivity extends BaseActivity {
     private final ExecutorService recordService = Executors.newSingleThreadExecutor();
     private final Map<String, PeerView> peerViewMap = new ConcurrentHashMap<>();
     private static final String PEER_VIEW_PREFIX = "peerView_";
+    private final List<String> members = new ArrayList<>();
+    private MeetMemberRecycleAdapter meetMemberRecycleAdapter;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -86,6 +90,12 @@ public class RoomActivity extends BaseActivity {
         createRoom();
         //验证权限
         checkPermission();
+        //
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        mediasoupActivityBinding.memberContainerRecycle.setLayoutManager(manager);
+        meetMemberRecycleAdapter = new MeetMemberRecycleAdapter(this, members);
+        mediasoupActivityBinding.memberContainerRecycle.setAdapter(meetMemberRecycleAdapter);
     }
 
 
@@ -282,10 +292,12 @@ public class RoomActivity extends BaseActivity {
     }
 
     public void setPeerViewLayout(Peers peers) {
+        members.clear();
         LinearLayout memberContainer = mediasoupActivityBinding.memberContainer;
         List<Peer> peerList = peers.getAllPeers();
         Set<String> peerIds = new HashSet<>();
         for (Peer peer : peerList) {
+            members.add(peer.getId());
             String mapKey = PEER_VIEW_PREFIX + peer.getId();
             peerIds.add(mapKey);
             if (peerViewMap.containsKey(mapKey)) continue;
@@ -302,5 +314,6 @@ public class RoomActivity extends BaseActivity {
                 memberContainer.removeView(entry.getValue());
             }
         }
+        meetMemberRecycleAdapter.notifyItemChanged(0, members.size());
     }
 }
