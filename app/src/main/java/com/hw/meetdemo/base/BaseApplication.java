@@ -20,7 +20,11 @@ public class BaseApplication extends MultiDexApplication {
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
             ex.printStackTrace();
-            Log.i("错误日志", ex.getMessage());
+            StackTraceElement stackTraceElement = ex.getStackTrace()[0];
+            String className = stackTraceElement.getClassName();
+            String methodName = stackTraceElement.getMethodName();
+            int lineNumber = stackTraceElement.getLineNumber();
+            Log.i("错误日志", ex.getMessage() + "\n" + className + "\n" + methodName + "\n" + lineNumber);
         });
         //全局异常
         Logger.setLogLevel(Logger.LogLevel.LOG_DEBUG);

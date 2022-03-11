@@ -28,6 +28,7 @@ import com.hw.mediasoup.lib.lv.RoomStore;
 import com.hw.mediasoup.lib.model.Notify;
 import com.hw.mediasoup.lib.model.Peer;
 import com.hw.mediasoup.lib.model.Peers;
+import com.hw.mediasoup.view.MeView;
 import com.hw.mediasoup.view.PeerView;
 import com.hw.mediasoup.vm.EdiasProps;
 import com.hw.mediasoup.vm.MeProps;
@@ -302,7 +303,7 @@ public class RoomActivity extends BaseActivity {
             peerProps.connect(this, peer.getId());
             memberProps.add(peerProps);
         }
-        meetMemberRecycleAdapter.notifyItemRangeChanged(0, memberProps.size());
+        meetMemberRecycleAdapter.notifyDataSetChanged();
     }
 
     //public void setPeerViewLayout2(Peers peers) {
