@@ -21,6 +21,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.hw.mediasoup.lib.PeerConnectionUtils;
 import com.hw.mediasoup.lib.RoomClient;
 import com.hw.mediasoup.lib.RoomOptions;
@@ -57,6 +60,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -77,8 +81,6 @@ public class RoomActivity extends BaseActivity {
     private RoomStore mRoomStore;
     private RoomClient mRoomClient;
     private final ExecutorService recordService = Executors.newSingleThreadExecutor();
-    private final Map<String, PeerView> peerViewMap = new ConcurrentHashMap<>();
-    private static final String PEER_VIEW_PREFIX = "peerView_";
     private final List<PeerProps> memberProps = new ArrayList<>();
     private MeetMemberRecycleAdapter meetMemberRecycleAdapter = null;
 
@@ -92,14 +94,10 @@ public class RoomActivity extends BaseActivity {
             int width = mediasoupActivityBinding.memberParent.getWidth();
             int height = mediasoupActivityBinding.memberParent.getHeight();
             //生成recycleView
-//            LinearLayoutManager manager = new LinearLayoutManager(this);
-//            manager.setOrientation(LinearLayoutManager.VERTICAL);
 
-
-            int spanCount = 3;
-            StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(
-                    spanCount,
-                    StaggeredGridLayoutManager.VERTICAL);
+            FlexboxLayoutManager manager = new FlexboxLayoutManager(this);
+            manager.setFlexDirection(FlexDirection.ROW);
+            manager.setJustifyContent(JustifyContent.CENTER);
 
             mediasoupActivityBinding.memberContainerRecycle.setLayoutManager(manager);
             meetMemberRecycleAdapter = new MeetMemberRecycleAdapter(this, memberProps, mRoomClient, width, height);
@@ -296,13 +294,6 @@ public class RoomActivity extends BaseActivity {
         });
     }
 
-    public PeerView generatePeerView() {
-        PeerView peerView = new PeerView(this);
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(500, 500);
-        peerView.setLayoutParams(lp);
-        return peerView;
-    }
-
     public void setPeerViewLayout(Peers peers) {
         memberProps.clear();
         List<Peer> peerList = peers.getAllPeers();
@@ -310,39 +301,7 @@ public class RoomActivity extends BaseActivity {
             PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
             peerProps.connect(this, peer.getId());
             memberProps.add(peerProps);
-            memberProps.add(peerProps);
-            memberProps.add(peerProps);
-            memberProps.add(peerProps);
-            memberProps.add(peerProps);
-            memberProps.add(peerProps);
-            memberProps.add(peerProps);
         }
         meetMemberRecycleAdapter.notifyDataSetChanged();
     }
-
-    //public void setPeerViewLayout2(Peers peers) {
-    //    members.clear();
-    //    LinearLayout memberContainer = mediasoupActivityBinding.memberContainer;
-    //    List<Peer> peerList = peers.getAllPeers();
-    //    Set<String> peerIds = new HashSet<>();
-    //    for (Peer peer : peerList) {
-    //        members.add(peer.getId());
-    //        String mapKey = PEER_VIEW_PREFIX + peer.getId();
-    //        peerIds.add(mapKey);
-    //        if (peerViewMap.containsKey(mapKey)) continue;
-    //        PeerView peerView = generatePeerView();
-    //        peerViewMap.put(mapKey, peerView);
-    //        memberContainer.addView(peerView);
-    //        PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
-    //        peerProps.connect(this, peer.getId());
-    //        peerView.setProps(peerProps, mRoomClient);
-    //    }
-    //    for (Map.Entry<String, PeerView> entry : peerViewMap.entrySet()) {
-    //        if (!peerIds.contains(entry.getKey())) {
-    //            peerViewMap.remove(entry.getKey());
-    //            memberContainer.removeView(entry.getValue());
-    //        }
-    //    }
-    //    meetMemberRecycleAdapter.notifyItemChanged(0, members.size());
-    //}
 }

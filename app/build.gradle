@@ -58,5 +58,5 @@ dependencies {
     implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.79'
     //okhttp
     implementation 'com.squareup.okhttp3:okhttp:4.3.0'
-
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 }
