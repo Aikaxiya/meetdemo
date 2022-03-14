@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hw.mediasoup.lib.PeerConnectionUtils;
@@ -91,8 +92,15 @@ public class RoomActivity extends BaseActivity {
             int width = mediasoupActivityBinding.memberParent.getWidth();
             int height = mediasoupActivityBinding.memberParent.getHeight();
             //生成recycleView
-            LinearLayoutManager manager = new LinearLayoutManager(this);
-            manager.setOrientation(LinearLayoutManager.VERTICAL);
+//            LinearLayoutManager manager = new LinearLayoutManager(this);
+//            manager.setOrientation(LinearLayoutManager.VERTICAL);
+
+
+            int spanCount = 3;
+            StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(
+                    spanCount,
+                    StaggeredGridLayoutManager.VERTICAL);
+
             mediasoupActivityBinding.memberContainerRecycle.setLayoutManager(manager);
             meetMemberRecycleAdapter = new MeetMemberRecycleAdapter(this, memberProps, mRoomClient, width, height);
             mediasoupActivityBinding.memberContainerRecycle.setAdapter(meetMemberRecycleAdapter);
@@ -195,7 +203,7 @@ public class RoomActivity extends BaseActivity {
         mRoomStore.getProducers().observe(this, producers -> {
             //监听视频 如有则开始录制
             if (connected.get() && producers.filter("video") != null && producers.filter("video").getScore() != null) {
-                startVideoRecord();
+//                startVideoRecord();
                 connected.set(false);
             }
         });
@@ -301,6 +309,12 @@ public class RoomActivity extends BaseActivity {
         for (Peer peer : peerList) {
             PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
             peerProps.connect(this, peer.getId());
+            memberProps.add(peerProps);
+            memberProps.add(peerProps);
+            memberProps.add(peerProps);
+            memberProps.add(peerProps);
+            memberProps.add(peerProps);
+            memberProps.add(peerProps);
             memberProps.add(peerProps);
         }
         meetMemberRecycleAdapter.notifyDataSetChanged();
