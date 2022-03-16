@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hw.mediasoup.lib.RoomClient;
+import com.hw.mediasoup.lib.model.Info;
 import com.hw.mediasoup.view.PeerView;
 import com.hw.mediasoup.vm.PeerProps;
 import com.hw.meetdemo.R;
@@ -59,10 +61,15 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
 
     @Override
     public void onBindViewHolder(@NonNull MeetMemberRecycleAdapter.MemberViewHolder memberViewHolder, int position) {
-        LinearLayout.LayoutParams lp = calcSize(peerProps.size());
+        RelativeLayout.LayoutParams lp = calcSize(peerProps.size());
         PeerView peerView = memberViewHolder.memberBinding.member;
         peerView.setLayoutParams(lp);
-        peerView.setProps(peerProps.get(position), roomClient);
+        PeerProps peerProp = this.peerProps.get(position);
+        peerView.setProps(peerProp, roomClient);
+        Info info = peerProp.getPeer().get();
+        if (info != null) {
+            memberViewHolder.memberBinding.displayName.setText(info.getDisplayName());
+        }
     }
 
     @Override
@@ -76,47 +83,47 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
     }
 
     //计算宽高
-    private LinearLayout.LayoutParams calcSize(int size) {
-        LinearLayout.LayoutParams lp;
+    private RelativeLayout.LayoutParams calcSize(int size) {
+        RelativeLayout.LayoutParams lp;
         switch (size) {
             case 1:
-                lp = new LinearLayout.LayoutParams(width, height);
+                lp = new RelativeLayout.LayoutParams(width, height);
                 break;
             case 2:
-                lp = new LinearLayout.LayoutParams(width / 2, height);
+                lp = new RelativeLayout.LayoutParams(width / 2, height);
                 break;
             case 3:
             case 4:
-                lp = new LinearLayout.LayoutParams(width / 2, height / 2);
+                lp = new RelativeLayout.LayoutParams(width / 2, height / 2);
                 break;
             case 5:
             case 6:
-                lp = new LinearLayout.LayoutParams(width / 3, height / 2);
+                lp = new RelativeLayout.LayoutParams(width / 3, height / 2);
                 break;
             case 7:
             case 8:
             case 9:
-                lp = new LinearLayout.LayoutParams(width / 3, height / 3);
+                lp = new RelativeLayout.LayoutParams(width / 3, height / 3);
                 break;
             case 10:
             case 11:
             case 12:
-                lp = new LinearLayout.LayoutParams(width / 4, height / 3);
+                lp = new RelativeLayout.LayoutParams(width / 4, height / 3);
                 break;
             case 13:
             case 14:
             case 15:
             case 16:
-                lp = new LinearLayout.LayoutParams(width / 4, height / 4);
+                lp = new RelativeLayout.LayoutParams(width / 4, height / 4);
                 break;
             case 17:
             case 18:
             case 19:
             case 20:
-                lp = new LinearLayout.LayoutParams(width / 5, height / 4);
+                lp = new RelativeLayout.LayoutParams(width / 5, height / 4);
                 break;
             default:
-                lp = new LinearLayout.LayoutParams(width / 5, height / 5);
+                lp = new RelativeLayout.LayoutParams(width / 5, height / 5);
                 break;
         }
         return lp;

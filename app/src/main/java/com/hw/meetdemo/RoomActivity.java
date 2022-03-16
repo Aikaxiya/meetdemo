@@ -190,9 +190,7 @@ public class RoomActivity extends BaseActivity {
             mRoomClient.disableCam();
             roomObserver.openCamera.set(true);
         });
-        mediasoupActivityBinding.changeCamera.setOnClickListener(v -> {
-            mRoomClient.changeCam();
-        });
+        mediasoupActivityBinding.changeCamera.setOnClickListener(v -> mRoomClient.changeCam());
         //分享屏幕
         mediasoupActivityBinding.shareScreen.setOnClickListener(v -> {
             mRoomClient.enableShare();
@@ -224,10 +222,11 @@ public class RoomActivity extends BaseActivity {
         mRoomStore.getProducers().observe(this, producers -> {
             //监听视频 如有则开始录制
             if (connected.get() && producers.filter("video") != null && producers.filter("video").getScore() != null) {
-//                startVideoRecord();
+                //startVideoRecord();
                 connected.set(false);
             }
         });
+        //监听
         mRoomStore.getPeers().observe(this, this::setPeerViewLayout);
         // 通知
         final Observer<Notify> notifyObserver = notify -> {
@@ -321,6 +320,7 @@ public class RoomActivity extends BaseActivity {
         memberProps.clear();
         List<Peer> peerList = peers.getAllPeers();
         for (Peer peer : peerList) {
+            System.out.println("peer.getDisplayName() = " + peer.getDisplayName());
             PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
             peerProps.connect(this, peer.getId());
             memberProps.add(peerProps);

@@ -1,6 +1,8 @@
 package com.hw.meetdemo;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -31,9 +33,8 @@ public class MenuActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         menuActivityBinding = DataBindingUtil.setContentView(this, R.layout.menu_activity);
         menuActivityBinding.setRoomObserver(roomObserver);
-        //TODO 测试赋值
         roomObserver.meetRoomCode.set("102");
-        roomObserver.meetNumber.set(RandomUtil.randomString(4));
+        roomObserver.meetNumber.set(Build.MODEL);
         //呼叫按钮点击
         menuActivityBinding.meetCallBtn.setOnClickListener(v -> {
             String meetNum = roomObserver.meetNumber.get();
@@ -52,6 +53,5 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        roomObserver.meetNumber.set(RandomUtil.randomString(4));
     }
 }
