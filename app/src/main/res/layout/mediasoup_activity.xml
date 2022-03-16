@@ -18,7 +18,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black"
+        android:background="@color/dark_color"
         android:baselineAligned="false">
 
         <!--成员图像-->
@@ -77,48 +77,98 @@
                     android:layout_height="0px"
                     android:layout_weight="1" />
 
-                <LinearLayout
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_height="@dimen/x200"
+                    android:layout_gravity="center">
 
-                    <!--静音-->
-                    <Button
-                        android:id="@+id/muteMic"
-                        style="?android:attr/buttonStyle"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/muteMicText"
-                        android:visibility="@{roomObserver.hideMicButton==false ? View.VISIBLE:View.GONE}" />
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <!--解除静音-->
-                    <Button
-                        android:id="@+id/unMuteMic"
-                        style="?android:attr/buttonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/unMuteMicText"
-                        android:visibility="@{roomObserver.hideMicButton==true ? View.VISIBLE:View.GONE}" />
+                        <!--静音-->
+                        <Button
+                            android:id="@+id/muteMic"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/muteMicText"
+                            android:visibility="@{roomObserver.muteMic ? View.GONE:View.VISIBLE}" />
 
-                    <!--麦克风已禁用-->
-                    <Button
-                        android:id="@+id/disabledMic"
-                        style="?android:attr/buttonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/disabledMicText"
-                        android:visibility="@{roomObserver.showDisableMicButton==true ? View.VISIBLE:View.GONE}" />
+                        <!--解除静音-->
+                        <Button
+                            android:id="@+id/unMuteMic"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/unMuteMicText"
+                            android:visibility="@{roomObserver.muteMic ? View.VISIBLE:View.GONE}" />
 
-                    <!--挂断-->
-                    <Button
-                        android:id="@+id/hangUp"
-                        style="?android:attr/buttonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/hangUpText" />
+                        <!--麦克风已禁用-->
+                        <Button
+                            android:id="@+id/disabledMic"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/disabledMicText"
+                            android:visibility="@{roomObserver.disableMic ? View.VISIBLE:View.GONE}" />
 
-                </LinearLayout>
+                        <!--打开摄像头-->
+                        <Button
+                            android:id="@+id/openCamera"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/openCamera"
+                            android:visibility="@{roomObserver.openCamera ? View.VISIBLE:View.GONE}" />
+
+                        <!--关闭摄像头-->
+                        <Button
+                            android:id="@+id/closeCamera"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/closeCamera"
+                            android:visibility="@{roomObserver.openCamera ? View.GONE:View.VISIBLE}" />
+
+                        <!--翻转摄像头-->
+                        <Button
+                            android:id="@+id/changeCamera"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/changeCamera" />
+
+                        <!--分享屏幕-->
+                        <Button
+                            android:id="@+id/shareScreen"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/shareScreen"
+                            android:visibility="@{roomObserver.enableShare?View.GONE:View.VISIBLE}" />
+
+                        <Button
+                            android:id="@+id/noShareScreen"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/noShareScreen"
+                            android:visibility="@{roomObserver.enableShare?View.VISIBLE:View.GONE}" />
+
+                        <!--挂断-->
+                        <Button
+                            android:id="@+id/hangUp"
+                            style="?android:attr/buttonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hangUpText" />
+
+                    </LinearLayout>
+
+                </ScrollView>
 
             </LinearLayout>
 

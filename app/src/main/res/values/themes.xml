@@ -22,4 +22,9 @@
     <style name="Theme.Demomeet.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Demomeet.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="darkEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#A2A2A2</item>
+    </style>
+
 </resources>

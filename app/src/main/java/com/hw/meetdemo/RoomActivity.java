@@ -9,7 +9,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -45,6 +48,7 @@ import com.hw.meetdemo.databind.RecordParam;
 import com.hw.meetdemo.databind.RoomBean;
 import com.hw.meetdemo.databind.RoomObserver;
 import com.hw.meetdemo.databinding.MediasoupActivityBinding;
+import com.hw.meetdemo.ui.Rotate3dAnimation;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
@@ -131,14 +135,13 @@ public class RoomActivity extends BaseActivity {
         if (StrUtil.isNotBlank(RoomBean.mediaSoupServerIp)) {
             UrlFactory.setHOSTNAME(RoomBean.mediaSoupServerIp);
         }
-        // 取背面摄像头
-        PeerConnectionUtils.setPreferCameraFace("back");
+        // 摄像头(背面：back 前置：front)
+        PeerConnectionUtils.setPreferCameraFace("front");
     }
 
     private void initRoomClient() {
         mRoomClient = new RoomClient(this, mRoomStore, "familyMeeting_" + RoomBean.roomCode, RoomBean.FROM, RoomBean.FROM, true, false, mOptions);
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initViewModel() {
@@ -156,29 +159,50 @@ public class RoomActivity extends BaseActivity {
         findViewById(R.id.change_cam).setVisibility(View.GONE);
         //禁用麦克风
         mediasoupActivityBinding.disabledMic.setEnabled(false);
-        if (!RoomBean.audioControl) {
-            roomObserver.hideMicButton.set(true);
-            roomObserver.showDisableMicButton.set(false);
-            AtomicReference<Boolean> isMute = new AtomicReference<>(false);
-            mRoomStore.getProducers().observe(this, producers -> {
-                //监听音频 如有则静音
-                if (!isMute.get() && producers.filter("audio") != null && producers.filter("audio").getScore() != null) {
-                    mRoomClient.muteMic();
-                    isMute.set(true);
-                }
-            });
-        }
+        roomObserver.disableMic.set(false);
+        AtomicReference<Boolean> isMute = new AtomicReference<>(false);
+        mRoomStore.getProducers().observe(this, producers -> {
+            //监听音频 如有则静音
+            if (!isMute.get() && producers.filter("audio") != null && producers.filter("audio").getScore() != null) {
+                mRoomClient.muteMic();
+                isMute.set(true);
+            }
+        });
         //麦克风静音
         mediasoupActivityBinding.muteMic.setOnClickListener(v -> {
             mRoomClient.muteMic();
-            roomObserver.hideMicButton.set(true);
+            roomObserver.muteMic.set(true);
             Toast.makeText(this, "已静音", Toast.LENGTH_SHORT).show();
         });
         //麦克风解除静音
         mediasoupActivityBinding.unMuteMic.setOnClickListener(v -> {
             mRoomClient.unmuteMic();
-            roomObserver.hideMicButton.set(false);
+            roomObserver.muteMic.set(false);
             Toast.makeText(this, "已取消静音", Toast.LENGTH_SHORT).show();
+        });
+        roomObserver.openCamera.set(false);
+        //摄像头开关
+        mediasoupActivityBinding.openCamera.setOnClickListener(v -> {
+            mRoomClient.enableCam();
+            roomObserver.openCamera.set(false);
+        });
+        mediasoupActivityBinding.closeCamera.setOnClickListener(v -> {
+            mRoomClient.disableCam();
+            roomObserver.openCamera.set(true);
+        });
+        mediasoupActivityBinding.changeCamera.setOnClickListener(v -> {
+            mRoomClient.changeCam();
+        });
+        //分享屏幕
+        mediasoupActivityBinding.shareScreen.setOnClickListener(v -> {
+            mRoomClient.enableShare();
+            roomObserver.enableShare.set(true);
+            Toast.makeText(this, "开发中...", Toast.LENGTH_SHORT).show();
+        });
+        mediasoupActivityBinding.noShareScreen.setOnClickListener(v -> {
+            mRoomClient.disableShare();
+            roomObserver.enableShare.set(false);
+            Toast.makeText(this, "开发中...", Toast.LENGTH_SHORT).show();
         });
         //是否禁用
         final AtomicBoolean hangUp = new AtomicBoolean(false);
@@ -187,8 +211,6 @@ public class RoomActivity extends BaseActivity {
             if (hangUp.get()) {
                 Toast.makeText(this, RoomBean.ToastSPHJHangUpMessage04, Toast.LENGTH_SHORT).show();
             } else {
-                //提示
-                Toast.makeText(this, RoomBean.ToastSPHJHangUpMessage01 + "，" + RoomBean.SPHJ_Interval / 1000 + "秒后退出", Toast.LENGTH_SHORT).show();
                 //延迟跳转界面
                 new Handler(Looper.myLooper()).postDelayed(() -> {
                     if (activity != AppManager.getInstance().currentActivity()) return;

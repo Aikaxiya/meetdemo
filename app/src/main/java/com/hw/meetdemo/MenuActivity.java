@@ -48,4 +48,10 @@ public class MenuActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        roomObserver.meetNumber.set(RandomUtil.randomString(4));
+    }
 }

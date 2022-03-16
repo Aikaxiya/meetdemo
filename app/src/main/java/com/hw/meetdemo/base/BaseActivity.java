@@ -3,10 +3,15 @@ package com.hw.meetdemo.base;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +34,12 @@ public class BaseActivity extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
         Log.i("Android OS:", android.os.Build.VERSION.RELEASE);
+        //安卓设置沉浸状态栏
+        Window window = getWindow();
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        ViewGroup rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+        rootView.setPadding(0, 0, 0, 0);
     }
 
     @Override

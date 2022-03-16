@@ -5,6 +5,11 @@
     <string name="muteMicText">静音</string>
     <string name="unMuteMicText">解除静音</string>
     <string name="disabledMicText">麦克风已禁用</string>
+    <string name="openCamera">打开摄像头</string>
+    <string name="closeCamera">关闭摄像头</string>
+    <string name="changeCamera">翻转</string>
+    <string name="shareScreen">分享屏幕</string>
+    <string name="noShareScreen">取消分享</string>
     <string name="hangUpText">挂断</string>
     <string name="meetRoomCode">请输入房间号</string>
     <string name="meetNumber">请输入昵称</string>

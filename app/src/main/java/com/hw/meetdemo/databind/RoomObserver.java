@@ -13,8 +13,11 @@ public class RoomObserver {
     public final ObservableField<String> meetRoomCode = new ObservableField<>();
     //会见编号
     public final ObservableField<String> meetNumber = new ObservableField<>();
-    //是否隐藏静音按钮(麦克风)
-    public final ObservableField<Boolean> hideMicButton = new ObservableField<>(false);
-    //是否显示禁用麦克风
-    public final ObservableField<Boolean> showDisableMicButton = new ObservableField<>(false);
+    //是否静音
+    public final ObservableField<Boolean> muteMic = new ObservableField<>(false);
+    //是否静音麦克风
+    public final ObservableField<Boolean> disableMic = new ObservableField<>(false);
+    //是否打开摄像头
+    public final ObservableField<Boolean> openCamera = new ObservableField<>(false);
+    public final ObservableField<Boolean> enableShare = new ObservableField<>(false);
 }
