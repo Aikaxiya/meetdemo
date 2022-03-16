@@ -94,7 +94,6 @@ public class RoomActivity extends BaseActivity {
             int width = mediasoupActivityBinding.memberParent.getWidth();
             int height = mediasoupActivityBinding.memberParent.getHeight();
             //生成recycleView
-
             FlexboxLayoutManager manager = new FlexboxLayoutManager(this);
             manager.setFlexDirection(FlexDirection.ROW);
             manager.setJustifyContent(JustifyContent.CENTER);
@@ -102,6 +101,8 @@ public class RoomActivity extends BaseActivity {
             mediasoupActivityBinding.memberContainerRecycle.setLayoutManager(manager);
             meetMemberRecycleAdapter = new MeetMemberRecycleAdapter(this, memberProps, mRoomClient, width, height);
             mediasoupActivityBinding.memberContainerRecycle.setAdapter(meetMemberRecycleAdapter);
+            //停止复用
+            mediasoupActivityBinding.memberContainerRecycle.getRecycledViewPool().setMaxRecycledViews(0, 0);
             //创建room
             createRoom();
             //验证权限

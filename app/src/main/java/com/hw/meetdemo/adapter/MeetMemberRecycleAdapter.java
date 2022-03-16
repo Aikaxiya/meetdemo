@@ -1,6 +1,7 @@
 package com.hw.meetdemo.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +24,11 @@ import java.util.List;
  * @date: 2022/3/11 16:20
  * @description: 成员适配器
  */
-public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRecycleAdapter.MemberViewHolder> {
 
     private final Context context;
     private final List<PeerProps> peerProps;
     private final RoomClient roomClient;
-    private MemberItemLayoutBinding memberBinding;
     private final int width, height;
 
     public MeetMemberRecycleAdapter(Context context, List<PeerProps> peerProps, RoomClient roomClient, int width, int height) {
@@ -40,6 +40,7 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     static class MemberViewHolder extends RecyclerView.ViewHolder {
+        MemberItemLayoutBinding memberBinding;
 
         public MemberViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -48,17 +49,18 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        RecyclerView.ViewHolder viewHolder;
-        memberBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.member_item_layout, null, false);
+    public MeetMemberRecycleAdapter.MemberViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        MeetMemberRecycleAdapter.MemberViewHolder viewHolder;
+        MemberItemLayoutBinding memberBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.member_item_layout, null, false);
         viewHolder = new MemberViewHolder(memberBinding.getRoot());
+        viewHolder.memberBinding = memberBinding;
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder memberViewHolder, int position) {
+    public void onBindViewHolder(@NonNull MeetMemberRecycleAdapter.MemberViewHolder memberViewHolder, int position) {
         LinearLayout.LayoutParams lp = calcSize(peerProps.size());
-        PeerView peerView = memberBinding.member;
+        PeerView peerView = memberViewHolder.memberBinding.member;
         peerView.setLayoutParams(lp);
         peerView.setProps(peerProps.get(position), roomClient);
     }
