@@ -68,6 +68,7 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
         peerView.setProps(peerProp, roomClient);
         Info info = peerProp.getPeer().get();
         if (info != null) {
+            memberViewHolder.memberBinding.displayName.bringToFront();
             memberViewHolder.memberBinding.displayName.setText(info.getDisplayName());
         }
     }

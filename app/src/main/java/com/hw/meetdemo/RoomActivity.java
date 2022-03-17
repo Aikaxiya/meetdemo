@@ -8,11 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -20,8 +15,6 @@ import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.android.flexbox.FlexDirection;
@@ -35,8 +28,6 @@ import com.hw.mediasoup.lib.lv.RoomStore;
 import com.hw.mediasoup.lib.model.Notify;
 import com.hw.mediasoup.lib.model.Peer;
 import com.hw.mediasoup.lib.model.Peers;
-import com.hw.mediasoup.view.MeView;
-import com.hw.mediasoup.view.PeerView;
 import com.hw.mediasoup.vm.EdiasProps;
 import com.hw.mediasoup.vm.MeProps;
 import com.hw.mediasoup.vm.PeerProps;
@@ -48,27 +39,22 @@ import com.hw.meetdemo.databind.RecordParam;
 import com.hw.meetdemo.databind.RoomBean;
 import com.hw.meetdemo.databind.RoomObserver;
 import com.hw.meetdemo.databinding.MediasoupActivityBinding;
-import com.hw.meetdemo.ui.Rotate3dAnimation;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
+import lombok.Data;
 
 /**
  * @author: Andrew chen
@@ -101,7 +87,6 @@ public class RoomActivity extends BaseActivity {
             FlexboxLayoutManager manager = new FlexboxLayoutManager(this);
             manager.setFlexDirection(FlexDirection.ROW);
             manager.setJustifyContent(JustifyContent.CENTER);
-
             mediasoupActivityBinding.memberContainerRecycle.setLayoutManager(manager);
             meetMemberRecycleAdapter = new MeetMemberRecycleAdapter(this, memberProps, mRoomClient, width, height);
             mediasoupActivityBinding.memberContainerRecycle.setAdapter(meetMemberRecycleAdapter);
@@ -136,7 +121,7 @@ public class RoomActivity extends BaseActivity {
             UrlFactory.setHOSTNAME(RoomBean.mediaSoupServerIp);
         }
         // 摄像头(背面：back 前置：front)
-        PeerConnectionUtils.setPreferCameraFace("front");
+        PeerConnectionUtils.setPreferCameraFace("back");
     }
 
     private void initRoomClient() {
@@ -320,11 +305,11 @@ public class RoomActivity extends BaseActivity {
         memberProps.clear();
         List<Peer> peerList = peers.getAllPeers();
         for (Peer peer : peerList) {
-            System.out.println("peer.getDisplayName() = " + peer.getDisplayName());
             PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
             peerProps.connect(this, peer.getId());
             memberProps.add(peerProps);
         }
         meetMemberRecycleAdapter.notifyDataSetChanged();
     }
+
 }
