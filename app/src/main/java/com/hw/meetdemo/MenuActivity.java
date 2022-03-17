@@ -13,6 +13,7 @@ import com.hw.meetdemo.base.BaseActivity;
 import com.hw.meetdemo.databind.RoomBean;
 import com.hw.meetdemo.databind.RoomObserver;
 import com.hw.meetdemo.databinding.MenuActivityBinding;
+import com.hw.meetdemo.util.CameraUtil;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
@@ -25,7 +26,6 @@ import cn.hutool.core.util.StrUtil;
 public class MenuActivity extends BaseActivity {
 
     MenuActivityBinding menuActivityBinding;
-
     public RoomObserver roomObserver = new RoomObserver();
 
     @Override

@@ -1,11 +1,9 @@
 package com.hw.meetdemo.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -20,6 +18,9 @@ import com.hw.meetdemo.R;
 import com.hw.meetdemo.databinding.MemberItemLayoutBinding;
 
 import java.util.List;
+import java.util.Set;
+
+import cn.hutool.core.collection.ConcurrentHashSet;
 
 /**
  * @author: 13105
@@ -32,6 +33,7 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
     private final List<PeerProps> peerProps;
     private final RoomClient roomClient;
     private final int width, height;
+    public static final Set<String> peerIdSet = new ConcurrentHashSet<>();
 
     public MeetMemberRecycleAdapter(Context context, List<PeerProps> peerProps, RoomClient roomClient, int width, int height) {
         this.context = context;
@@ -68,6 +70,11 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
         peerView.setProps(peerProp, roomClient);
         Info info = peerProp.getPeer().get();
         if (info != null) {
+            boolean needRender = !peerIdSet.contains(info.getId());
+            if (needRender) {
+                peerView.setProps(peerProp, roomClient);
+            }
+            peerIdSet.add(info.getId());
             memberViewHolder.memberBinding.displayName.bringToFront();
             memberViewHolder.memberBinding.displayName.setText(info.getDisplayName());
         }

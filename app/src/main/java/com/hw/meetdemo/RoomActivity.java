@@ -39,6 +39,7 @@ import com.hw.meetdemo.databind.RecordParam;
 import com.hw.meetdemo.databind.RoomBean;
 import com.hw.meetdemo.databind.RoomObserver;
 import com.hw.meetdemo.databinding.MediasoupActivityBinding;
+import com.hw.meetdemo.util.CameraUtil;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
@@ -48,13 +49,13 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
-import lombok.Data;
 
 /**
  * @author: Andrew chen
@@ -64,7 +65,6 @@ import lombok.Data;
 public class RoomActivity extends BaseActivity {
 
     private final String TAG = RoomActivity.class.getSimpleName();
-
     private MediasoupActivityBinding mediasoupActivityBinding;
     public RoomObserver roomObserver = new RoomObserver();
     private RoomOptions mOptions;
@@ -73,13 +73,17 @@ public class RoomActivity extends BaseActivity {
     private final ExecutorService recordService = Executors.newSingleThreadExecutor();
     private final List<PeerProps> memberProps = new ArrayList<>();
     private MeetMemberRecycleAdapter meetMemberRecycleAdapter = null;
+    //摄像头数量
+    private int cameraCount = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cameraCount = CameraUtil.judgeCameraCount(this);
         mediasoupActivityBinding = DataBindingUtil.setContentView(this, R.layout.mediasoup_activity);
         mediasoupActivityBinding.setRoomObserver(roomObserver);
+        MeetMemberRecycleAdapter.peerIdSet.clear();
         mediasoupActivityBinding.memberParent.post(() -> {
             int width = mediasoupActivityBinding.memberParent.getWidth();
             int height = mediasoupActivityBinding.memberParent.getHeight();
@@ -121,7 +125,16 @@ public class RoomActivity extends BaseActivity {
             UrlFactory.setHOSTNAME(RoomBean.mediaSoupServerIp);
         }
         // 摄像头(背面：back 前置：front)
-        PeerConnectionUtils.setPreferCameraFace("back");
+        switch (cameraCount) {
+            case 1:
+                PeerConnectionUtils.setPreferCameraFace("back");
+                break;
+            case 2:
+                PeerConnectionUtils.setPreferCameraFace("front");
+                break;
+            default:
+                throw new IllegalArgumentException("请检查是否安装摄像头");
+        }
     }
 
     private void initRoomClient() {
@@ -180,7 +193,6 @@ public class RoomActivity extends BaseActivity {
         mediasoupActivityBinding.shareScreen.setOnClickListener(v -> {
             mRoomClient.enableShare();
             roomObserver.enableShare.set(true);
-            Toast.makeText(this, "开发中...", Toast.LENGTH_SHORT).show();
         });
         mediasoupActivityBinding.noShareScreen.setOnClickListener(v -> {
             mRoomClient.disableShare();
@@ -301,6 +313,7 @@ public class RoomActivity extends BaseActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void setPeerViewLayout(Peers peers) {
         memberProps.clear();
         List<Peer> peerList = peers.getAllPeers();
