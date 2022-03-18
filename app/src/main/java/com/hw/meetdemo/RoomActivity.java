@@ -49,9 +49,7 @@ import com.nabinbhandari.android.permissions.Permissions;
 
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
-import org.webrtc.EglBase;
 import org.webrtc.PeerConnectionFactory;
-import org.webrtc.RendererCommon;
 import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.SurfaceTextureHelper;
 import org.webrtc.VideoCapturer;
@@ -63,14 +61,11 @@ import org.webrtc.VideoTrack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -106,7 +101,7 @@ public class RoomActivity extends BaseActivity {
         cameraCount = CameraUtil.judgeCameraCount(this);
         mediasoupActivityBinding = DataBindingUtil.setContentView(this, R.layout.mediasoup_activity);
         //屏幕共享surfaceView
-        initSurfaceView();
+        //initSurfaceView();
         mediasoupActivityBinding.setRoomObserver(roomObserver);
         mediasoupActivityBinding.memberParent.post(() -> {
             int width = mediasoupActivityBinding.memberParent.getWidth();
@@ -216,14 +211,14 @@ public class RoomActivity extends BaseActivity {
         //分享屏幕
         mediasoupActivityBinding.shareScreen.setOnClickListener(v -> {
             //mRoomClient.enableShare();
-            startScreenShare();
             roomObserver.enableShare.set(true);
+            startScreenShare();
         });
         mediasoupActivityBinding.noShareScreen.setOnClickListener(v -> {
             //mRoomClient.disableShare();
-            stopScreenShare();
             roomObserver.enableShare.set(false);
             Toast.makeText(this, "开发中...", Toast.LENGTH_SHORT).show();
+            stopScreenShare();
         });
         //是否禁用
         final AtomicBoolean hangUp = new AtomicBoolean(false);
@@ -361,38 +356,18 @@ public class RoomActivity extends BaseActivity {
         meetMemberRecycleAdapter.notifyDataSetChanged();
     }
 
-    private final EglBase eglBase = EglBase.create();
+    //private final EglBase eglBase = EglBase.create();
 
     private PeerConnectionFactory createPeerConnectionFactory(Context context) {
         final VideoEncoderFactory encoderFactory;
         final VideoDecoderFactory decoderFactory;
         //编码启用H264编码器(支持硬件加速), Vp8不支持硬件加速
-        encoderFactory = new DefaultVideoEncoderFactory(eglBase.getEglBaseContext(), false, true);
-        decoderFactory = new DefaultVideoDecoderFactory(eglBase.getEglBaseContext());
+        encoderFactory = new DefaultVideoEncoderFactory(PeerConnectionUtils.getEglContext(), false, true);
+        decoderFactory = new DefaultVideoDecoderFactory(PeerConnectionUtils.getEglContext());
         PeerConnectionFactory.initialize(PeerConnectionFactory.InitializationOptions.builder(context).setEnableInternalTracer(true).createInitializationOptions());
         PeerConnectionFactory.Builder builder = PeerConnectionFactory.builder().setVideoEncoderFactory(encoderFactory).setVideoDecoderFactory(decoderFactory);
         builder.setOptions(null);
         return builder.createPeerConnectionFactory();
-    }
-
-    //初始化屏幕共享的surfaceView
-    private void initSurfaceView() {
-        mediasoupActivityBinding.localSurfaceView.init(eglBase.getEglBaseContext(), new RendererCommon.RendererEvents() {
-
-            @Override
-            public void onFirstFrameRendered() {
-
-            }
-
-            @Override
-            public void onFrameResolutionChanged(int i, int i1, int i2) {
-
-            }
-        });
-        //缩放按比例填充
-        mediasoupActivityBinding.localSurfaceView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
-        mediasoupActivityBinding.localSurfaceView.setMirror(true);  //镜像翻转
-        mediasoupActivityBinding.localSurfaceView.setEnableHardwareScaler(false);   //不采用硬件缩放器
     }
 
     //开始屏幕共享
@@ -417,7 +392,7 @@ public class RoomActivity extends BaseActivity {
         //创建peerConnectionFactory
         PeerConnectionFactory peerConnectionFactory = createPeerConnectionFactory(this);
         //将videoSource注册为mVideoCapture的观察者
-        surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread2", eglBase.getEglBaseContext());
+        surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread2", PeerConnectionUtils.getEglContext());
         //创建视频源并初始化
         screenVideoSource = peerConnectionFactory.createVideoSource(videoCapturer.isScreencast());
         videoCapturer.initialize(surfaceTextureHelper, getApplicationContext(), screenVideoSource.getCapturerObserver());
@@ -443,18 +418,9 @@ public class RoomActivity extends BaseActivity {
         screenAudioTrack.setVolume(10);*/
         //视频轨
         VideoTrack screenVideoTrack = peerConnectionFactory.createVideoTrack("ARDAMSv1", screenVideoSource);
-        screenVideoTrack.setEnabled(true);
-        mediasoupActivityBinding.localSurfaceView.clearImage();
-        mediasoupActivityBinding.localSurfaceView.setMirror(false);
-        screenVideoTrack.addSink(mediasoupActivityBinding.localSurfaceView);
-        //todo 共享屏幕
-        //mediasoupActivityBinding.meVideo.setProps(null, mRoomClient);
-        //EdiasProps.Factory factory = new EdiasProps.Factory(getApplication(), mRoomStore);
-        //MeProps screenProps = new ViewModelProvider(this, factory).get(MeProps.class);
-        //screenProps.connect(this);
-        //screenProps.getVideoTrack().set(screenVideoTrack);
-        //screenProps.getAudioTrack().set(screenAudioTrack);
-        //mediasoupActivityBinding.meVideo.setProps(screenProps, mRoomClient);
+        PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
+        peerProps.getVideoTrack().set(screenVideoTrack);
+        mediasoupActivityBinding.screenVideo.setProps(peerProps, mRoomClient);
     }
 
     //停止屏幕共享
@@ -472,6 +438,5 @@ public class RoomActivity extends BaseActivity {
         if (screenVideoSource != null) {
             screenVideoSource.dispose();
         }
-        mediasoupActivityBinding.localSurfaceView.clearImage();
     }
 }

@@ -20,6 +20,7 @@ import com.hw.mediasoup.lib.RoomClient;
 import com.hw.mediasoup.vm.MeProps;
 
 import org.webrtc.SurfaceViewRenderer;
+import org.webrtc.VideoTrack;
 
 public class MeView extends RelativeLayout {
 
@@ -107,7 +108,4 @@ public class MeView extends RelativeLayout {
         mBinding.peerView.videoRenderer.release();
     }
 
-    public SurfaceViewRenderer getVideoRenderer() {
-        return mBinding.peerView.videoRenderer;
-    }
 }
