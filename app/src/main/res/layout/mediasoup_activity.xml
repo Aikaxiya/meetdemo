@@ -21,40 +21,6 @@
         android:background="@color/dark_color"
         android:baselineAligned="false">
 
-        <!--成员图像-->
-        <LinearLayout
-            android:id="@+id/memberParent"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:weightSum="10">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/x5"
-                android:text="@string/targetText"
-                android:textSize="@dimen/fontSize18"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/memberContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/memberContainerRecycle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none" />
-
-        </LinearLayout>
-
         <!--自己图像-->
         <LinearLayout
             android:layout_width="0px"
@@ -173,6 +139,30 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <!--成员图像-->
+        <RelativeLayout
+            android:id="@+id/memberParent"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <org.webrtc.SurfaceViewRenderer
+                android:id="@+id/localSurfaceView"
+                android:layout_width="@dimen/y80"
+                android:layout_height="@dimen/y80"
+                android:layout_alignParentEnd="true" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/memberContainerRecycle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:scrollbars="none" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
