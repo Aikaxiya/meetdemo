@@ -1,5 +1,7 @@
 package com.hw.meetdemo.base;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
@@ -15,9 +17,13 @@ import org.mediasoup.droid.MediasoupClient;
  */
 public class BaseApplication extends MultiDexApplication {
 
+    @SuppressLint("StaticFieldLeak")
+    private static Context context;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
         Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
             ex.printStackTrace();
             StackTraceElement stackTraceElement = ex.getStackTrace()[0];
@@ -31,5 +37,9 @@ public class BaseApplication extends MultiDexApplication {
         Logger.setDefaultHandler();
         MediasoupClient.initialize(getApplicationContext());
         Log.d("MediaSoupClient", "MediaSoupClient 完成初始化");
+    }
+
+    public static Context getContext() {
+        return context;
     }
 }

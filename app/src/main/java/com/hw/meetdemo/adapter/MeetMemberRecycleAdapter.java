@@ -54,9 +54,9 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
 
     @NonNull
     @Override
-    public MeetMemberRecycleAdapter.MemberViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public MeetMemberRecycleAdapter.MemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         MeetMemberRecycleAdapter.MemberViewHolder viewHolder;
-        MemberItemLayoutBinding memberBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.member_item_layout, null, false);
+        MemberItemLayoutBinding memberBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.member_item_layout, parent, false);
         viewHolder = new MemberViewHolder(memberBinding.getRoot());
         viewHolder.memberBinding = memberBinding;
         return viewHolder;

@@ -43,6 +43,7 @@ import com.hw.meetdemo.databind.RecordParam;
 import com.hw.meetdemo.databind.RoomBean;
 import com.hw.meetdemo.databind.RoomObserver;
 import com.hw.meetdemo.databinding.MediasoupActivityBinding;
+import com.hw.meetdemo.ui.dialog.LoadingDialog;
 import com.hw.meetdemo.util.CameraUtil;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
@@ -100,8 +101,6 @@ public class RoomActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         cameraCount = CameraUtil.judgeCameraCount(this);
         mediasoupActivityBinding = DataBindingUtil.setContentView(this, R.layout.mediasoup_activity);
-        //屏幕共享surfaceView
-        //initSurfaceView();
         mediasoupActivityBinding.setRoomObserver(roomObserver);
         mediasoupActivityBinding.memberParent.post(() -> {
             int width = mediasoupActivityBinding.memberParent.getWidth();
@@ -267,7 +266,7 @@ public class RoomActivity extends BaseActivity {
                 if (mRoomClient != null) {
                     mRoomClient.join();
                 }
-                connectionWebSocket();//连接WebSocket
+                connectWebSocket();//连接WebSocket
                 faceVerify();//人脸检测
             }
 
@@ -308,7 +307,7 @@ public class RoomActivity extends BaseActivity {
         }
     }
 
-    public void connectionWebSocket() {
+    public void connectWebSocket() {
 
     }
 
