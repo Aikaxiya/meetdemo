@@ -30,7 +30,7 @@ public class MenuActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         menuActivityBinding = DataBindingUtil.setContentView(this, R.layout.menu_activity);
         menuActivityBinding.setRoomObserver(roomObserver);
-        roomObserver.meetRoomCode.set("102");
+        roomObserver.meetRoomCode.set("video_conference_1");
         roomObserver.meetNumber.set(Build.MODEL);
         //呼叫按钮点击
         menuActivityBinding.meetCallBtn.setOnClickListener(v -> {

@@ -156,7 +156,7 @@ public class RoomActivity extends BaseActivity {
     }
 
     private void initRoomClient() {
-        mRoomClient = new RoomClient(this, mRoomStore, "familyMeeting_" + RoomBean.roomCode, RoomBean.FROM, RoomBean.FROM, true, false, mOptions);
+        mRoomClient = new RoomClient(this, mRoomStore, RoomBean.roomCode, RoomBean.FROM, RoomBean.FROM, true, false, mOptions);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
