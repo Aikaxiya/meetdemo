@@ -43,13 +43,15 @@ import com.hw.meetdemo.databind.RecordParam;
 import com.hw.meetdemo.databind.RoomBean;
 import com.hw.meetdemo.databind.RoomObserver;
 import com.hw.meetdemo.databinding.MediasoupActivityBinding;
-import com.hw.meetdemo.ui.dialog.LoadingDialog;
 import com.hw.meetdemo.util.CameraUtil;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
+import org.mediasoup.droid.MediasoupException;
+import org.mediasoup.droid.Producer;
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
+import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.SurfaceTextureHelper;
@@ -210,11 +212,13 @@ public class RoomActivity extends BaseActivity {
         //分享屏幕
         mediasoupActivityBinding.shareScreen.setOnClickListener(v -> {
             //mRoomClient.enableShare();
+            roomObserver.openCamera.set(true);
             roomObserver.enableShare.set(true);
             startScreenShare();
         });
         mediasoupActivityBinding.noShareScreen.setOnClickListener(v -> {
             //mRoomClient.disableShare();
+            roomObserver.openCamera.set(true);
             roomObserver.enableShare.set(false);
             Toast.makeText(this, "开发中...", Toast.LENGTH_SHORT).show();
             stopScreenShare();
@@ -419,7 +423,10 @@ public class RoomActivity extends BaseActivity {
         VideoTrack screenVideoTrack = peerConnectionFactory.createVideoTrack("ARDAMSv1", screenVideoSource);
         PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
         peerProps.getVideoTrack().set(screenVideoTrack);
+        //todo close完成后无法再次打开  clearImage又会造成图像重叠
+        mediasoupActivityBinding.meVideo.close();
         mediasoupActivityBinding.screenVideo.setProps(peerProps, mRoomClient);
+        mRoomClient.screenSharing(screenVideoTrack);
     }
 
     //停止屏幕共享
@@ -437,5 +444,6 @@ public class RoomActivity extends BaseActivity {
         if (screenVideoSource != null) {
             screenVideoSource.dispose();
         }
+        mRoomClient.stopScreenSharing();
     }
 }
