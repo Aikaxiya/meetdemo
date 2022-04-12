@@ -40,6 +40,14 @@
                     android:id="@+id/meVideo"
                     android:layout_width="match_parent"
                     android:layout_height="0px"
+                    android:layout_weight="1"
+                    android:visibility="@{!roomObserver.enableShare?View.VISIBLE:View.GONE}" />
+
+                <com.hw.mediasoup.view.PeerView
+                    android:id="@+id/screenVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:visibility="@{roomObserver.enableShare?View.VISIBLE:View.GONE}"
                     android:layout_weight="1" />
 
                 <ScrollView
@@ -147,13 +155,6 @@
             android:layout_weight="4"
             android:gravity="center_horizontal"
             android:orientation="vertical">
-
-            <com.hw.mediasoup.view.PeerView
-                android:id="@+id/screenVideo"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/memberContainerRecycle"

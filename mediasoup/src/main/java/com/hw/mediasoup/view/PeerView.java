@@ -40,7 +40,7 @@ public class PeerView extends RelativeLayout {
         init(context);
     }
 
-   ViewPeerBinding mBinding;
+    ViewPeerBinding mBinding;
 
     private void init(Context context) {
         mBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.view_peer, this, true);
@@ -68,9 +68,11 @@ public class PeerView extends RelativeLayout {
     }
 
     public void close() {
-        if (mBinding.peerView.videoRenderer != null) {
-            mBinding.peerView.videoRenderer.clearImage();
-            mBinding.peerView.videoRenderer.release();
-        }
+        mBinding.peerView.videoRenderer.clearImage();
+        mBinding.peerView.videoRenderer.release();
+    }
+
+    public void clearImage() {
+        mBinding.peerView.videoRenderer.clearImage();
     }
 }

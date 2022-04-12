@@ -161,6 +161,8 @@ public class RoomActivity extends BaseActivity {
         mRoomClient = new RoomClient(this, mRoomStore, RoomBean.roomCode, RoomBean.FROM, RoomBean.FROM, true, false, mOptions);
     }
 
+    private MeProps meProps;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initViewModel() {
         EdiasProps.Factory factory = new EdiasProps.Factory(getApplication(), mRoomStore);
@@ -168,7 +170,7 @@ public class RoomActivity extends BaseActivity {
         roomProps.connect(this);
         mediasoupActivityBinding.setRoomProps(roomProps);
         //自己
-        MeProps meProps = new ViewModelProvider(this, factory).get(MeProps.class);
+        meProps = new ViewModelProvider(this, factory).get(MeProps.class);
         meProps.connect(this);
         mediasoupActivityBinding.meVideo.setProps(meProps, mRoomClient);
         // 禁用麦克风等按钮
@@ -201,10 +203,12 @@ public class RoomActivity extends BaseActivity {
         roomObserver.openCamera.set(false);
         //摄像头开关
         mediasoupActivityBinding.openCamera.setOnClickListener(v -> {
+            mediasoupActivityBinding.meVideo.setProps(meProps, mRoomClient);
             mRoomClient.enableCam();
             roomObserver.openCamera.set(false);
         });
         mediasoupActivityBinding.closeCamera.setOnClickListener(v -> {
+            mediasoupActivityBinding.meVideo.setProps(null, mRoomClient);
             mRoomClient.disableCam();
             roomObserver.openCamera.set(true);
         });
@@ -423,9 +427,8 @@ public class RoomActivity extends BaseActivity {
         VideoTrack screenVideoTrack = peerConnectionFactory.createVideoTrack("ARDAMSv1", screenVideoSource);
         PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
         peerProps.getVideoTrack().set(screenVideoTrack);
-        //todo close完成后无法再次打开  clearImage又会造成图像重叠
-        mediasoupActivityBinding.meVideo.close();
         mediasoupActivityBinding.screenVideo.setProps(peerProps, mRoomClient);
+        mediasoupActivityBinding.meVideo.setProps(null, mRoomClient);
         mRoomClient.screenSharing(screenVideoTrack);
     }
 
@@ -444,6 +447,7 @@ public class RoomActivity extends BaseActivity {
         if (screenVideoSource != null) {
             screenVideoSource.dispose();
         }
+        mediasoupActivityBinding.screenVideo.clearImage();
         mRoomClient.stopScreenSharing();
     }
 }
