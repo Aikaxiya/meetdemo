@@ -1194,6 +1194,10 @@ public class RoomClient extends RoomMessageHandler {
             mStore.addProducer(mShareProducer);
         } catch (MediasoupException e) {
             e.printStackTrace();
+            mStore.addNotify("error", "Error enabling webcam: " + e.getMessage());
+            if (mScreenShareTrack != null) {
+                mScreenShareTrack.setEnabled(false);
+            }
         }
     }
 
