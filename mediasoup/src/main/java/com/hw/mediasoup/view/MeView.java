@@ -108,7 +108,7 @@ public class MeView extends RelativeLayout {
         mBinding.peerView.videoRenderer.release();
     }
 
-    public void clearImage() {
-        mBinding.peerView.videoRenderer.clearImage();
+    public void setMirror(boolean mirror) {
+        mBinding.peerView.videoRenderer.setMirror(mirror);
     }
 }

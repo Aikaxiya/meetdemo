@@ -18,7 +18,10 @@ import com.hw.mediasoup.vm.PeerProps;
 import com.hw.meetdemo.R;
 import com.hw.meetdemo.databinding.MemberItemLayoutBinding;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -56,7 +59,7 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
     @Override
     public MeetMemberRecycleAdapter.MemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         MeetMemberRecycleAdapter.MemberViewHolder viewHolder;
-        MemberItemLayoutBinding memberBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.member_item_layout, parent, false);
+        MemberItemLayoutBinding memberBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.member_item_layout, null, false);
         viewHolder = new MemberViewHolder(memberBinding.getRoot());
         viewHolder.memberBinding = memberBinding;
         return viewHolder;
@@ -114,20 +117,8 @@ public class MeetMemberRecycleAdapter extends RecyclerView.Adapter<MeetMemberRec
             case 12:
                 lp = new RelativeLayout.LayoutParams(width / 4, height / 3);
                 break;
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-                lp = new RelativeLayout.LayoutParams(width / 4, height / 4);
-                break;
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-                lp = new RelativeLayout.LayoutParams(width / 5, height / 4);
-                break;
             default:
-                lp = new RelativeLayout.LayoutParams(width / 5, height / 5);
+                lp = new RelativeLayout.LayoutParams(width / 4, height / 4);
                 break;
         }
         return lp;

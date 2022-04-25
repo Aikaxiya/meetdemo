@@ -13,6 +13,7 @@ public class RoomBean {
     public static String roomCode = "";
     //server服务器地址
     public static String mediaSoupServerIp = "192.168.0.100";
+    //public static String mediaSoupServerIp = "v3demo.mediasoup.org";
 
     public static final String REGISTER = "register";//注册
     public static final String REGISTER_RESPONSE = "register_response";//注册回复

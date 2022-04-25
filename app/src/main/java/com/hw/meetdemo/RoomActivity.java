@@ -47,11 +47,8 @@ import com.hw.meetdemo.util.CameraUtil;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
-import org.mediasoup.droid.MediasoupException;
-import org.mediasoup.droid.Producer;
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
-import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.SurfaceTextureHelper;
@@ -173,6 +170,7 @@ public class RoomActivity extends BaseActivity {
         meProps = new ViewModelProvider(this, factory).get(MeProps.class);
         meProps.connect(this);
         mediasoupActivityBinding.meVideo.setProps(meProps, mRoomClient);
+        mediasoupActivityBinding.meVideo.setMirror(true);
         // 禁用麦克风等按钮
         findViewById(R.id.mic).setVisibility(View.GONE);
         findViewById(R.id.cam).setVisibility(View.GONE);
@@ -351,18 +349,6 @@ public class RoomActivity extends BaseActivity {
         });
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setPeerViewLayout(Peers peers) {
-        memberProps.clear();
-        List<Peer> peerList = peers.getAllPeers();
-        for (Peer peer : peerList) {
-            PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
-            peerProps.connect(this, peer.getId());
-            memberProps.add(peerProps);
-        }
-        meetMemberRecycleAdapter.notifyDataSetChanged();
-    }
-
     //private final EglBase eglBase = EglBase.create();
 
     private PeerConnectionFactory createPeerConnectionFactory(Context context) {
@@ -449,5 +435,18 @@ public class RoomActivity extends BaseActivity {
         }
         mediasoupActivityBinding.screenVideo.clearImage();
         mRoomClient.stopScreenSharing();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @SuppressLint("NotifyDataSetChanged")
+    public void setPeerViewLayout(Peers peers) {
+        memberProps.clear();
+        List<Peer> peerList = peers.getAllPeers();
+        for (Peer peer : peerList) {
+            PeerProps peerProps = new PeerProps(getApplication(), mRoomStore);
+            peerProps.connect(this, peer.getId());
+            memberProps.add(peerProps);
+        }
+        meetMemberRecycleAdapter.notifyDataSetChanged();
     }
 }
