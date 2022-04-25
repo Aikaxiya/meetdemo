@@ -440,6 +440,8 @@ public class RoomActivity extends BaseActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("NotifyDataSetChanged")
     public void setPeerViewLayout(Peers peers) {
+        //上一次最后的下标
+        int lastPosition = memberProps.size() - 1;
         memberProps.clear();
         List<Peer> peerList = peers.getAllPeers();
         for (Peer peer : peerList) {
@@ -447,6 +449,6 @@ public class RoomActivity extends BaseActivity {
             peerProps.connect(this, peer.getId());
             memberProps.add(peerProps);
         }
-        meetMemberRecycleAdapter.notifyDataSetChanged();
+        meetMemberRecycleAdapter.notifyItemRangeChanged(lastPosition, memberProps.size());
     }
 }
