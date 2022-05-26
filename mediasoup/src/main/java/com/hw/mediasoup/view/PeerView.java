@@ -17,6 +17,9 @@ import com.hw.mediasoup.lib.PeerConnectionUtils;
 import com.hw.mediasoup.lib.RoomClient;
 import com.hw.mediasoup.vm.PeerProps;
 
+import org.webrtc.RendererCommon;
+import org.webrtc.SurfaceViewRenderer;
+
 public class PeerView extends RelativeLayout {
 
     public PeerView(@NonNull Context context) {
@@ -68,11 +71,22 @@ public class PeerView extends RelativeLayout {
     }
 
     public void close() {
-        mBinding.peerView.videoRenderer.clearImage();
-        mBinding.peerView.videoRenderer.release();
+        if (mBinding.peerView.videoRenderer != null) {
+            mBinding.peerView.videoRenderer.clearImage();
+            mBinding.peerView.videoRenderer.release();
+        }
     }
 
     public void clearImage() {
         mBinding.peerView.videoRenderer.clearImage();
+    }
+
+    public void setMirror(boolean mirror) {
+        mBinding.peerView.videoRenderer.setMirror(mirror);
+    }
+
+    public void setScanType(RendererCommon.ScalingType scanType) {
+        SurfaceViewRenderer surfaceViewRenderer = mBinding.peerView.videoRenderer;
+        surfaceViewRenderer.setScalingType(scanType);
     }
 }

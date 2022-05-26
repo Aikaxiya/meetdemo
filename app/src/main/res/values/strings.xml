@@ -14,5 +14,5 @@
     <string name="meetRoomCode">请输入房间号</string>
     <string name="meetNumber">请输入昵称</string>
     <string name="meetBackText">返回</string>
-    <string name="meetCallText">呼叫</string>
+    <string name="meetCallText">立即进入</string>
 </resources>
